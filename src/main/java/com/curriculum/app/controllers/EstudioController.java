@@ -2,7 +2,6 @@ package com.curriculum.app.controllers;
 
 import com.curriculum.app.models.common.ServiceResult;
 import com.curriculum.app.models.entity.Estudio;
-import com.curriculum.app.models.entity.ExperienciaLaboral;
 import com.curriculum.app.models.services.IPersonaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
