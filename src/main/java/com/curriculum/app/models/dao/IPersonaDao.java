@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface IPersonaDao extends JpaRepository<Persona, Long> {
 
-    @Query("select p from Persona p where p.nombre=?1 and p.apellido=?1")
-    public Persona findByNombre(String term);
+    @Query("select p from Persona p where p.nombre=?1 and p.apellido=?2")
+    public Persona findByNombre(String nombre, String apellido);
 }

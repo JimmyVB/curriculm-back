@@ -39,7 +39,7 @@ public class InformacionController {
             return new ResponseEntity<>(serviceResult, HttpStatus.INTERNAL_SERVER_ERROR);
 
         }
-        return new ResponseEntity<>(serviceResult, HttpStatus.CREATED);
+        return new ResponseEntity<>(serviceResult, HttpStatus.OK);
     }
 
     @PostMapping("/create")
@@ -49,7 +49,7 @@ public class InformacionController {
 
         try {
 
-            serviceResult.setMessage("Informacion creada");
+            serviceResult.setMessage("Persona obtenida");
             serviceResult.setData(personaService.save(persona));
 
         }catch (Exception ex){

@@ -35,13 +35,10 @@ public class PersonaClienteService implements IPersonaService{
 
     @Override
     public Persona findByNombre(String nombre) {
-
-        String string = nombre;
-        String[] parts = string.split("_");
+        String[] parts = nombre.split("_");
         String nuevoNombre = parts[0]; // 123
         String nuevoApellido = parts[1];
-        String criterioBusqueda = nuevoNombre+nuevoApellido;
-        return personaDao.findByNombre(nombre);
+        return personaDao.findByNombre(nuevoNombre, nuevoApellido);
     }
 
     @Override
