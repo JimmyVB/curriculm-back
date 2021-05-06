@@ -34,6 +34,17 @@ public class PersonaClienteService implements IPersonaService{
     }
 
     @Override
+    public Persona findByNombre(String nombre) {
+
+        String string = nombre;
+        String[] parts = string.split("_");
+        String nuevoNombre = parts[0]; // 123
+        String nuevoApellido = parts[1];
+        String criterioBusqueda = nuevoNombre+nuevoApellido;
+        return personaDao.findByNombre(nombre);
+    }
+
+    @Override
     public ExperienciaLaboral saveExperiencia(ExperienciaLaboral experienciaLaboral) {
         return experienciaLaboralDao.save(experienciaLaboral);
     }

@@ -6,6 +6,7 @@ public interface IPersonaService {
 
     public Persona save(Persona persona);
     public Persona findById(Long id);
+    public Persona findByNombre(String nombre);
 
     public ExperienciaLaboral saveExperiencia(ExperienciaLaboral experienciaLaboral);
     public ExperienciaLaboral findExperienciaById(Long id);

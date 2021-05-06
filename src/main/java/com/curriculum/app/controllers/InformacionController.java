@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = {"http://localhost:4200"})
+import java.util.List;
+
+@CrossOrigin
 @RestController
 @RequestMapping("/api/informacion")
 public class InformacionController {
@@ -19,6 +21,26 @@ public class InformacionController {
 
     @Autowired
     private IPersonaService personaService;
+
+    @GetMapping("/ver/{nombre}")
+    public ResponseEntity<ServiceResult> buscar(@PathVariable String nombre){
+
+        ServiceResult serviceResult = new ServiceResult();
+
+        try {
+
+            serviceResult.setMessage("Informacion creada");
+            serviceResult.setData(personaService.findByNombre(nombre));
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+            serviceResult.setError(ex.getMessage());
+            serviceResult.setSuccess(false);
+            return new ResponseEntity<>(serviceResult, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+        return new ResponseEntity<>(serviceResult, HttpStatus.CREATED);
+    }
 
     @PostMapping("/create")
     public ResponseEntity<ServiceResult> create(@RequestBody Persona persona){
@@ -38,10 +60,9 @@ public class InformacionController {
 
         }
         return new ResponseEntity<>(serviceResult, HttpStatus.CREATED);
-
     }
 
-    @PostMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<ServiceResult> update(@RequestBody Persona persona, @PathVariable Long id){
 
         ServiceResult serviceResult = new ServiceResult();

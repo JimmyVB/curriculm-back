@@ -26,7 +26,9 @@ public class Usuario implements Serializable {
     private Boolean enabled;
 
     @ManyToMany(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name="")
+    @JoinTable(name = "usuarios.roles", joinColumns = @JoinColumn(name="usuario_id")
+            ,inverseJoinColumns = @JoinColumn(name="role_id"),
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"usuario_id", "role_id"})})
     private List<Role> roles;
 
     public Long getId() {

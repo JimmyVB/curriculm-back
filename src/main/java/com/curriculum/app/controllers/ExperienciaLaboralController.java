@@ -69,7 +69,7 @@ public class ExperienciaLaboralController {
         return new ResponseEntity<>(serviceResult, HttpStatus.OK);
     }
 
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<ServiceResult> delete(@PathVariable Long id){
 
         ServiceResult serviceResult = new ServiceResult();
