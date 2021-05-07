@@ -27,6 +27,11 @@ public class Persona implements Serializable {
 
     private String correo;
 
+    private String foto;
+
+    @OneToOne(fetch=FetchType.LAZY)
+    private Usuario usuario;
+
     public Long getId() {
         return id;
     }
@@ -89,5 +94,21 @@ public class Persona implements Serializable {
 
     public void setCorreo(String correo) {
         this.correo = correo;
+    }
+
+    public String getFoto() {
+        return foto;
+    }
+
+    public void setFoto(String foto) {
+        this.foto = foto;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }
