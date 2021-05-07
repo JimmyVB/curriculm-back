@@ -3,9 +3,12 @@ package com.curriculum.app.controllers;
 import com.curriculum.app.models.common.ServiceResult;
 import com.curriculum.app.models.entity.Persona;
 import com.curriculum.app.models.services.IPersonaService;
+import com.curriculum.app.models.services.IUploadFileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +30,9 @@ public class InformacionController {
 
     @Autowired
     private IPersonaService personaService;
+
+    @Autowired
+    private IUploadFileService uploadFileService;
 
     @GetMapping("/{nombre}")
     public ResponseEntity<ServiceResult> ver(@PathVariable String nombre){
@@ -118,7 +125,7 @@ public class InformacionController {
         return new ResponseEntity<>(serviceResult, HttpStatus.OK);
     }
 
-    @PostMapping("/clientes/upload")
+    @PostMapping("/upload")
     public ResponseEntity<?> upload(@RequestParam("archivo") MultipartFile archivo, @RequestParam("id") Long id){
 
         Map<String, Object> response = new HashMap<>();
@@ -136,14 +143,29 @@ public class InformacionController {
                 return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            String nombreFotoAnterior = cliente.getFoto();
+            String nombreFotoAnterior = persona.getFoto();
             uploadFileService.eliminar(nombreFotoAnterior);
 
-            cliente.setFoto(nombreArchivo);
-            clienteService.save(cliente);
-            response.put("cliente", cliente);
-            response.put("mensaje", "Has subido correctamente la imagen: " + nombreArchivo);
+            persona.setFoto(nombreArchivo);
+            personaService.save(persona);
         }
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/uploads/img/{nombreFoto:.+}")
+    public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto){
+
+        Resource recurso = null;
+
+        try {
+            recurso = uploadFileService.cargar(nombreFoto);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        HttpHeaders cabecera = new HttpHeaders();
+        cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+recurso.getFilename()+"\"");
+
+        return new ResponseEntity<Resource>(recurso, cabecera, HttpStatus.OK);
     }
 }

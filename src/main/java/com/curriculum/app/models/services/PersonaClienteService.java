@@ -30,7 +30,7 @@ public class PersonaClienteService implements IPersonaService{
 
     @Override
     public Persona findById(Long id) {
-        return personaDao.findById(id).orElse(null);
+        return personaDao.findByUsuarioId(id);
     }
 
     @Override
