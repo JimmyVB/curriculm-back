@@ -8,9 +8,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin
 @RestController
@@ -22,15 +27,35 @@ public class InformacionController {
     @Autowired
     private IPersonaService personaService;
 
-    @GetMapping("/ver/{nombre}")
-    public ResponseEntity<ServiceResult> buscar(@PathVariable String nombre){
+    @GetMapping("/{nombre}")
+    public ResponseEntity<ServiceResult> ver(@PathVariable String nombre){
 
         ServiceResult serviceResult = new ServiceResult();
 
         try {
 
-            serviceResult.setMessage("Informacion creada");
+            serviceResult.setMessage("Informacion obtenida");
             serviceResult.setData(personaService.findByNombre(nombre));
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+            serviceResult.setError(ex.getMessage());
+            serviceResult.setSuccess(false);
+            return new ResponseEntity<>(serviceResult, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
+        return new ResponseEntity<>(serviceResult, HttpStatus.OK);
+    }
+
+    @GetMapping("/buscar/{id}")
+    public ResponseEntity<ServiceResult> buscarPorId(@PathVariable Long id){
+
+        ServiceResult serviceResult = new ServiceResult();
+
+        try {
+
+            serviceResult.setMessage("Informacion encontrada");
+            serviceResult.setData(personaService.findById(id));
 
         }catch (Exception ex){
             ex.printStackTrace();
@@ -49,7 +74,7 @@ public class InformacionController {
 
         try {
 
-            serviceResult.setMessage("Persona obtenida");
+            serviceResult.setMessage("Informacion Creada");
             serviceResult.setData(personaService.save(persona));
 
         }catch (Exception ex){
@@ -93,4 +118,32 @@ public class InformacionController {
         return new ResponseEntity<>(serviceResult, HttpStatus.OK);
     }
 
+    @PostMapping("/clientes/upload")
+    public ResponseEntity<?> upload(@RequestParam("archivo") MultipartFile archivo, @RequestParam("id") Long id){
+
+        Map<String, Object> response = new HashMap<>();
+
+        Persona persona = personaService.findById(id);
+
+        if(!archivo.isEmpty()){
+
+            String nombreArchivo = null;
+            try {
+                nombreArchivo = uploadFileService.copiar(archivo);
+            } catch (IOException e) {
+                response.put("mensaje", "Error al subir la imagen del cliente");
+                response.put("error", e.getMessage().concat(": ").concat(e.getCause().getMessage()));
+                return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            String nombreFotoAnterior = cliente.getFoto();
+            uploadFileService.eliminar(nombreFotoAnterior);
+
+            cliente.setFoto(nombreArchivo);
+            clienteService.save(cliente);
+            response.put("cliente", cliente);
+            response.put("mensaje", "Has subido correctamente la imagen: " + nombreArchivo);
+        }
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+    }
 }
